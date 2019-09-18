@@ -2,7 +2,7 @@ import * as Yup from 'yup';
 import { isBefore, parseISO } from 'date-fns';
 import Meetups from '../models/Meetups';
 import User from '../models/User';
-import Subsccrption from '../models/Subscription';
+import Subscription from '../models/Subscription';
 
 class SubscriptionController {
   async store(req, res) {
@@ -17,6 +17,12 @@ class SubscriptionController {
     const { meetup_id } = req.body;
 
     const meetup = await Meetups.findByPk(meetup_id);
+    const checkSubscrib = await Subscription.findAll({
+      where: {
+        user_id: req.userId,
+
+      },
+    });
 
     if (meetup.user_id === req.userId) {
       return res.status(400).json({ error: 'You cannot sign up for meetups you have created.' });
